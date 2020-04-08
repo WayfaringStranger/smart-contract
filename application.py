@@ -26,11 +26,11 @@ class Blockchain:
         return self.chain[-1]
 
 
-    def proof_of_work(self, previous_hash):
+    def proof_of_work(self, previous_proof):
         new_proof = 1
         check_proof = False
         while check_proof is False:
-            hash_operation = hashlib.sha256(str(new_proof ** 2 - previous_hash ** 2).encode()).hexdigest()
+            hash_operation = hashlib.sha256(str(new_proof ** 2 - previous_proof ** 2).encode()).hexdigest()
             if hash_operation[:4] == '0000':
                 check_proof = True
             else:
@@ -52,8 +52,8 @@ class Blockchain:
                 return False
             previous_proof = previous_block['proof']
             proof = block['proof']
-            hash_operation = hashlib.sha256(str(proof ** 2 - previous_hash ** 2).encode()).hexdigest()
-            if previous_hash[:4] != '0000':
+            hash_operation = hashlib.sha256(str(proof ** 2 - previous_proof ** 2).encode()).hexdigest()
+            if hash_operation[:4] != '0000':
                 return False
             previous_block = block
             block_index += 1
@@ -90,6 +90,7 @@ def get_chain():
                 'length': len(blockchain.chain)}
     return jsonify(response), 200
 
+
 ''' Checking if the Blockchain is valid '''
 @app.route('/is_valid', methods = ['GET'])
 def is_valid():
@@ -97,7 +98,7 @@ def is_valid():
     if is_valid:
         response = {'message': 'All good. The Blockchain is valid.'}
     else:
-        response = {'message': 'Houston, we have a problem. The Blockchain is not valid.'}
+        response = {'message': 'Hey, we have a problem. The Blockchain is not valid.'}
     return jsonify(response), 200
 
 
